@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.api.SkillResult;
 import com.herocraftonline.heroes.characters.Hero;
@@ -38,7 +39,7 @@ public class SkillEntomb extends TargettedSkill {
         setIdentifiers("skill entomb");
         setTypes(SkillType.SILENCABLE, SkillType.LIGHT, SkillType.DEBUFF);  
         
-        Bukkit.getServer().getPluginManager().registerEvents(new SkillListener(), plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(new SkillListener( plugin ), plugin);
     }
    
     @Override
@@ -59,7 +60,7 @@ public class SkillEntomb extends TargettedSkill {
     	long period 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.PERIOD.node(), 4000, false);
     	int tickDmg = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
         
-        String base = String.format("Encase your target in glass for $1 seconds. ", duration/1000);
+        String base = String.format("Encase your target in glass for %s seconds. ", duration/1000);
         
         return tickDmg > 0 ? base.concat("Deals " + tickDmg + " every " + period + " seconds.") : base; 
     }
@@ -68,7 +69,7 @@ public class SkillEntomb extends TargettedSkill {
     public SkillResult use(Hero hero, LivingEntity target, String[] args) {
     	Player player = hero.getPlayer();
     	
-    	if (player.equals(target) || hero.getSummons().contains(target) || !damageCheck(player, target)) {
+    	if (player.equals(target) || hero.getSummons().contains(target) || !Skill.damageCheck(player, target) ) {
             Messaging.send(player, "Can't entomb the target");
             return SkillResult.INVALID_TARGET_NO_MSG;
         }
@@ -101,10 +102,10 @@ public class SkillEntomb extends TargettedSkill {
 	            return SkillResult.INVALID_TARGET;
     	}
     }
-    
-    
-    
-    public class EntombEffect extends PeriodicExpirableEffect{
+
+
+
+	public class EntombEffect extends PeriodicExpirableEffect{
     
     	private HashSet<Block> blocks;
     	private final String applyText = "$1 has been entombed";
@@ -119,7 +120,7 @@ public class SkillEntomb extends TargettedSkill {
 		}  
 
         @Override
-        public void applyToHero(Hero hero) {
+        public void applyToHero( Hero hero ) {
             super.applyToHero(hero);
             Player player = hero.getPlayer();
             broadcast(player.getLocation(), applyText, player.getDisplayName());
@@ -134,7 +135,7 @@ public class SkillEntomb extends TargettedSkill {
         }
 
         @Override
-        public void removeFromHero(Hero hero) {
+        public void removeFromHero( Hero hero ) {
             super.removeFromHero(hero);
             Player player = hero.getPlayer();
             Iterator<Block> glsIter = blocks.iterator();
@@ -148,11 +149,11 @@ public class SkillEntomb extends TargettedSkill {
             	Effect eff = hero.getEffect("EntombDmgEffect");
             	hero.removeEffect(eff);
             }
-            broadcast(player.getLocation(), expireText, player.getDisplayName());
+            broadcast( player.getLocation(), expireText, player.getDisplayName() );
         }
         
         @Override
-        public void tickHero(Hero hero) {
+        public void tickHero( Hero hero ) {
             Player p = hero.getPlayer();
             Location location = p.getLocation();
             if (location == null)
@@ -164,15 +165,17 @@ public class SkillEntomb extends TargettedSkill {
             }
         }
 
+
 		@Override
-		public void tickMonster(Monster arg0) {
+		public void tickMonster( Monster arg0 ) {
+			//No use on monsters yet
 		}
 	    
     }
     
     public class EntombDmgEffect extends PeriodicDamageEffect{
     	
-    	public EntombDmgEffect(Skill skill, long period, long duration, int tickDmg, Player applier) {
+    	public EntombDmgEffect( Skill skill, long period, long duration, int tickDmg, Player applier ) {
 			super(skill, "EntombDmg", period, duration, tickDmg, applier);
 			this.types.add(EffectType.LIGHT);
     	}  
@@ -207,17 +210,20 @@ public class SkillEntomb extends TargettedSkill {
     
     public class SkillListener implements Listener{
     	
+    	private Heroes plugin;
+    	
+		public SkillListener( Heroes plugin){
+    		this.plugin = plugin;
+    	}
     	@EventHandler
     	public void onBlockBreak(BlockBreakEvent event){
     		Player player 	= event.getPlayer();
-    		Hero hero 		= plugin.getCharacterManager().getHero( player );
+    		Hero hero = plugin.getCharacterManager().getHero( player );
     		if(hero.hasEffect("Entomb")){
     			event.setCancelled(true);
     		}
     	}
   
     }
-    
-   
 
 }

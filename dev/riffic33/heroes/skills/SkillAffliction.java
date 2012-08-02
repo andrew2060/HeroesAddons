@@ -50,7 +50,7 @@ public class SkillAffliction extends TargettedSkill {
     	long duration 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 12000, false);
     	int jumps 		= (int) SkillConfigManager.getUseSetting(hero, this, "MaxJumps", 3, false);
     	int tickDmg = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
-    	String dJump = jumps > 0 ? "Jumps " +jumps+ " times":"";
+    	String dJump = jumps > 0 ? " Jumps " +jumps+ " times":"";
     	
     	String base = String.format("Put a damage over time effect on the target dealing %s damage every %s seconds over %s seconds.", tickDmg, period/1000L, duration/1000L);
     	
@@ -114,7 +114,7 @@ public class SkillAffliction extends TargettedSkill {
 	    @Override
         public void applyToMonster(Monster entity) {
             super.applyToMonster(entity);
-            broadcast( entity.getEntity().getLocation(), applyText, entity.getEntity().getClass().getSimpleName().substring(5));    
+            broadcast( entity.getEntity().getLocation(), applyText, entity.getEntity().getClass().getSimpleName().substring(5) );    
         }
        
         public void removeFromHero(Hero hero) {
@@ -132,7 +132,7 @@ public class SkillAffliction extends TargettedSkill {
         
         @Override
         public void removeFromMonster(Monster entity) {
-        	broadcast( entity.getEntity().getLocation(), expireText, entity.getEntity().getClass().getSimpleName()); 
+        	broadcast( entity.getEntity().getLocation(), expireText, entity.getEntity().getClass().getSimpleName().substring(5) ); 
         	if(maxJumps-1 <= 0){
         		super.removeFromMonster(entity);
         		return;
@@ -159,7 +159,7 @@ public class SkillAffliction extends TargettedSkill {
         private void passEffect(Hero hero, Monster entity, AfflictionEffect eff){
         	int radius = (int) SkillConfigManager.getUseSetting(hero, this.getSkill(), "MaxJumpDistance", 5, false);
         	for(Entity newTarget : entity.getEntity().getNearbyEntities(radius, radius, radius)){
-        		if(!(newTarget instanceof LivingEntity) || newTarget == eff.getApplier()){
+        		if( !(newTarget instanceof LivingEntity) || newTarget.equals( eff.getApplier() ) ){
         			continue;
         		}
             	if (newTarget instanceof LivingEntity) {

@@ -65,6 +65,7 @@ public class SkillLifeTap extends ActiveSkill {
         	int damage = (int) (Math.floor(max*((double)pctLoss/100D)));
         	damageEntity(player, player, damage, DamageCause.CUSTOM);
         	hero.setMana( hero.getMana() + manaGain > 100 ? 100 : hero.getMana()+manaGain ); 
+        	broadcast( player.getLocation() , "$1 used lifetap", player.getDisplayName() );
         	return SkillResult.NORMAL;
         }
     }

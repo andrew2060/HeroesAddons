@@ -87,8 +87,8 @@ public class SkillDarkTether extends TargettedSkill {
     }
     
     public class DarkTetherEffect extends PeriodicExpirableEffect{
-    	private String applyText;
-    	private String expireText;
+    	private String applyText = "DarkTether cast on $1";
+    	private String expireText = "DarkTether removed from $1";
     	private Skill skill;
     	
     	private final boolean closeness;
@@ -110,8 +110,6 @@ public class SkillDarkTether extends TargettedSkill {
 				this.baseDmg = tickDmg;
 				this.applier = applier;
 				this.applyHero = plugin.getCharacterManager().getHero( applier );
-				this.applyText = "DarkTether cast on $1";
-				this.expireText = "DarkTether removed from $1";
 		}  
 
         @Override
@@ -137,7 +135,7 @@ public class SkillDarkTether extends TargettedSkill {
         @Override
         public void removeFromMonster(Monster entity) {
         	super.removeFromMonster(entity);  
-        	broadcast( entity.getEntity().getLocation(), expireText, entity.getEntity().getClass().getSimpleName() ); 
+        	broadcast( entity.getEntity().getLocation(), expireText, entity.getEntity().getClass().getSimpleName().substring(5) ); 
         }
         
         @Override

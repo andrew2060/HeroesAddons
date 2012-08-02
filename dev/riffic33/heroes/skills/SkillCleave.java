@@ -71,42 +71,42 @@ public class SkillCleave extends ActiveSkill {
     	int duration = (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
     	
     	CleaveBuff cb = new CleaveBuff(this, duration);
-    	hero.addEffect(cb);
-    	
+    	hero.addEffect( cb );
     	return SkillResult.NORMAL;
 	}
  
-    public class CleaveBuff extends  ExpirableEffect{
+    public class CleaveBuff extends ExpirableEffect{
     	
     	private long duration = 0;
     		
-		public CleaveBuff(Skill skill,  long duration) {
+		public CleaveBuff( Skill skill,  long duration ) {
 			super(skill, "CleaveBuff", duration);
 			this.duration = duration;
 		}
 		
-		public void apply(Hero hero) {
-            super.apply(hero);
-            Messaging.send(hero.getPlayer(), "Cleaving available on your next attack for $1 seconds", duration/1000);
+		@Override
+		public void applyToHero( Hero hero ) {
+            super.applyToHero(hero);
+           Messaging.send( hero.getPlayer() , "Cleaving available on your next attack for $1 seconds", duration/1000 );
         }
 		
-        public void remove(Hero hero) {
-            super.remove(hero);
-            Messaging.send(hero.getPlayer(), "Can no longer cleave");
+		@Override
+        public void removeFromHero( Hero hero ) {
+            super.removeFromHero(hero);
+            Messaging.send( hero.getPlayer(), "Can no longer cleave" );
         }
-	
     }
     
     public class SkillListener implements Listener{
     		
     	private final Skill skill;
         
-        public SkillListener(Skill skill) {
+        public SkillListener( Skill skill ) {
             this.skill = skill;
         }
         
         @EventHandler(priority = EventPriority.HIGHEST)
-        public void onEntityDamage(EntityDamageEvent event) {
+        public void onEntityDamage( EntityDamageEvent event ) {
         	if (event.isCancelled() || !(event instanceof EntityDamageByEntityEvent)) {
                 return;
             }
@@ -167,7 +167,6 @@ public class SkillCleave extends ActiveSkill {
 	    		}
 	    	}
     	}else{
-    		player.sendMessage("No Party");
     		for(Entity entity : nearby){
     			if(Hits >= MaxTargets) break;
     			if(entity.equals(exception)){
