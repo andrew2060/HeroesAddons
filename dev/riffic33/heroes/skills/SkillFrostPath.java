@@ -11,6 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -151,10 +152,10 @@ public class SkillFrostPath extends ActiveSkill {
     		this.skill = skill;
     	}
     	
-    	@EventHandler
+    	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     	public void onEntityDamage(EntityDamageEvent event){
     		
-    		if (event.isCancelled() || !(event instanceof EntityDamageByEntityEvent)) {
+    		if (!(event instanceof EntityDamageByEntityEvent)) {
                 return;
             }
     		Entity player = event.getEntity();

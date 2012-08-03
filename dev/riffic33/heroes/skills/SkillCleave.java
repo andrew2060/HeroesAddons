@@ -105,9 +105,9 @@ public class SkillCleave extends ActiveSkill {
             this.skill = skill;
         }
         
-        @EventHandler(priority = EventPriority.HIGHEST)
+        @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
         public void onEntityDamage( EntityDamageEvent event ) {
-        	if (event.isCancelled() || !(event instanceof EntityDamageByEntityEvent)) {
+        	if (!(event instanceof EntityDamageByEntityEvent)) {
                 return;
             }
             
