@@ -28,17 +28,17 @@ import com.herocraftonline.heroes.characters.skill.SkillType;
 import com.herocraftonline.heroes.characters.skill.TargettedSkill;
 import com.herocraftonline.heroes.util.Messaging;
 import com.herocraftonline.heroes.util.Setting;
+import com.herocraftonline.heroes.util.Util;
 
 
 public class SkillIceBlock extends TargettedSkill {
 	
     public SkillIceBlock(Heroes plugin) {
         super(plugin, "IceBlock");
+        setDescription("Encapsulate your target in ice for %s seconds. ");
         setUsage("/skill iceblock");
-        setArgumentRange(0, 0);
-        setIdentifiers("skill iceblock");
+        setIdentifiers("skill iceblock", "skill Iceblock", "skill IceBlock", "skill iceBlock");
         setTypes(SkillType.SILENCABLE, SkillType.ICE, SkillType.DEBUFF);  
-        
         Bukkit.getServer().getPluginManager().registerEvents(new SkillListener(), plugin);
     }
    
@@ -57,12 +57,31 @@ public class SkillIceBlock extends TargettedSkill {
     	int bDmg 		= (int) SkillConfigManager.getUseSetting(hero, this, "BaseTickDamage", 0, false);
     	float bMulti 	= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0, false);
     	long duration 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 12000, false);
-    	long period 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.PERIOD.node(), 4000, false);
     	int tickDmg = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
     	
-        String base =  String.format("Encapsulate your target in ice for %s seconds. ", duration/1000D);
-        
-        return tickDmg > 0 ? base.concat("Deals " + tickDmg + " every " + period + " seconds.") : base;
+    	StringBuffer sb = new StringBuffer(String.format("Encapsulate your target in ice for %s seconds.", duration/1000D));
+        if (tickDmg > 0) {
+            long period = (int) SkillConfigManager.getUseSetting(hero, this, Setting.PERIOD.node(), 4000, false);
+            sb.append(" Deals ");
+            sb.append(tickDmg);
+            sb.append(" every ");
+            sb.append(period);
+            sb.append(" seconds.");
+        }
+    	double cdSec = SkillConfigManager.getUseSetting(hero, this,
+                Setting.COOLDOWN, 45000, false) / 1000.0D;
+        if (cdSec > 0.0D) {
+            sb.append(" CD:");
+            sb.append(Util.formatDouble(cdSec));
+            sb.append("s");
+        }
+        int mana = SkillConfigManager.getUseSetting(hero, this, Setting.MANA,
+                30, false);
+        if (mana > 0) {
+            sb.append(" M:");
+            sb.append(mana);
+        }
+        return sb.toString();
     }
     
     @Override
