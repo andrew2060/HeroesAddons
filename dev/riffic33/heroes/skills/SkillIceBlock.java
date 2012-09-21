@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import com.herocraftonline.heroes.Heroes;
@@ -61,11 +62,11 @@ public class SkillIceBlock extends TargettedSkill {
 
     @Override
     public String getDescription(Hero hero) {
-        int bDmg = (int) SkillConfigManager.getUseSetting(hero, this,
+        int bDmg = SkillConfigManager.getUseSetting(hero, this,
                 "BaseTickDamage", 0, false);
-        float bMulti = (float) SkillConfigManager.getUseSetting(hero, this,
+        float bMulti = SkillConfigManager.getUseSetting(hero, this,
                 "LevelMultiplier", 0, false);
-        long duration = (int) SkillConfigManager.getUseSetting(hero, this,
+        long duration = SkillConfigManager.getUseSetting(hero, this,
                 Setting.DURATION, 12000, false);
         int damage = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti
                 * hero.getLevel());
@@ -99,11 +100,11 @@ public class SkillIceBlock extends TargettedSkill {
         if (player == target) {
             return SkillResult.INVALID_TARGET;
         }
-        int bDmg = (int) SkillConfigManager.getUseSetting(hero, this,
+        int bDmg = SkillConfigManager.getUseSetting(hero, this,
                 "BaseTickDamage", 0, false);
         float bMulti = (float) SkillConfigManager.getUseSetting(hero, this,
                 "LevelMultiplier", 0.0, false);
-        long duration = (int) SkillConfigManager.getUseSetting(hero, this,
+        long duration = SkillConfigManager.getUseSetting(hero, this,
                 Setting.DURATION, 12000, false);
         int damage = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti
                 * hero.getLevel());
@@ -113,11 +114,11 @@ public class SkillIceBlock extends TargettedSkill {
         CharacterTemplate targetTemplate;
 
         if (target instanceof Player) {
-            targetTemplate = plugin.getCharacterManager().getHero(
+            targetTemplate = this.plugin.getCharacterManager().getHero(
                     (Player) target);
         } else {
-            targetTemplate = plugin.getCharacterManager().getMonster(
-                    (LivingEntity) target);
+            targetTemplate = this.plugin.getCharacterManager().getMonster(
+                    target);
         }
         targetTemplate.addEffect(iceBlockEffect);
 
@@ -160,7 +161,7 @@ public class SkillIceBlock extends TargettedSkill {
         }
 
         private void freeze(LivingEntity entity, String name) {
-            broadcast(entity.getLocation(), applyText, name);
+            broadcast(entity.getLocation(), this.applyText, name);
             Location pLoc = entity.getLocation();
             Location pBlockLoc = pLoc.getBlock().getLocation();
             Location tpLoc = new Location(pLoc.getWorld(),
@@ -216,7 +217,7 @@ public class SkillIceBlock extends TargettedSkill {
         }
 
         public void removeBlocks(LivingEntity entity, String name) {
-            Iterator<Block> iceIter = blocks.iterator();
+            Iterator<Block> iceIter = this.blocks.iterator();
             while (iceIter.hasNext()) {
                 Block bChange = iceIter.next();
                 if (bChange.getType() == Material.ICE) {
@@ -224,7 +225,7 @@ public class SkillIceBlock extends TargettedSkill {
                 }
             }
             HandlerList.unregisterAll(this.listener);
-            broadcast(entity.getLocation(), expireText, name);
+            broadcast(entity.getLocation(), this.expireText, name);
         }
 
         @Override
@@ -240,12 +241,12 @@ public class SkillIceBlock extends TargettedSkill {
         public void tpBack(LivingEntity entity) {
             try {
                 Location location = entity.getLocation();
-                if (location.getX() != loc.getX()
-                        || location.getY() != loc.getY()
-                        || location.getZ() != loc.getZ()) {
-                    loc.setYaw(location.getYaw());
-                    loc.setPitch(location.getPitch());
-                    entity.teleport(loc);
+                if (location.getX() != this.loc.getX()
+                        || location.getY() != this.loc.getY()
+                        || location.getZ() != this.loc.getZ()) {
+                    this.loc.setYaw(location.getYaw());
+                    this.loc.setPitch(location.getPitch());
+                    entity.teleport(this.loc);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -263,6 +264,13 @@ public class SkillIceBlock extends TargettedSkill {
 
         @EventHandler(ignoreCancelled = true)
         public void onBlockBreak(BlockBreakEvent event) {
+            if (this.blocks.contains(event.getBlock())) {
+                event.setCancelled(true);
+            }
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onBlockFadeEvent(BlockFadeEvent event) {
             if (this.blocks.contains(event.getBlock())) {
                 event.setCancelled(true);
             }
