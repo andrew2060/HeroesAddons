@@ -19,7 +19,6 @@ public class SkillLifeTap extends ActiveSkill {
     public SkillLifeTap(Heroes plugin) {
         super(plugin, "Lifetap");
         setUsage("/skill lifetap");
-        setDescription("Convert %s health to %s mana.");
         setIdentifiers("skill lifetap");
         setTypes(SkillType.SILENCABLE);
     }
@@ -35,33 +34,63 @@ public class SkillLifeTap extends ActiveSkill {
 
     @Override
     public String getDescription(Hero hero) {
-        int healthLoss = SkillConfigManager.getSetting(hero.getHeroClass(),
-                this, "HealthLossPercentage", 10);
-        int manaGain = SkillConfigManager.getSetting(hero.getHeroClass(), this,
-                "Manaregain", 10);
-        StringBuffer sb = new StringBuffer(String.format(getDescription(),
-                healthLoss + "%", manaGain));
-        int thresHold = SkillConfigManager.getSetting(hero.getHeroClass(),
-                this, "Threshold", 20);
+        int healthLoss = SkillConfigManager.getSetting(
+        		hero.getHeroClass(),this, "HealthLossPercentage", 10);
+        int manaGain = SkillConfigManager.getSetting(
+        		hero.getHeroClass(), this,"Manaregain", 10);
+        int thresHold = SkillConfigManager.getSetting(
+        		hero.getHeroClass(),this, "Threshold", 20);
+        
+        
+        String base = String.format("Convert %s health to %s mana.", healthLoss + "%", manaGain);
+        StringBuilder description = new StringBuilder( base );     
+        
         if (thresHold > 0) {
-            sb.append(" Not available with less than ");
-            sb.append(thresHold);
-            sb.append("% health left.");
+        	description.append(" Not available with less than ");
+        	description.append(thresHold);
+        	description.append("% health left.");
         }
-        double cdSec = SkillConfigManager.getUseSetting(hero, this,
-                Setting.COOLDOWN, 45000, false) / 1000.0D;
-        if (cdSec > 0.0D) {
-            sb.append(" CD:");
-            sb.append(Util.formatDouble(cdSec));
-            sb.append("s");
+        
+    	//Additional descriptive-ness of skill settings
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int CD = (initCD - redCD) / 1000;
+        if (CD > 0) {
+        	description.append( " CD:"+ CD + "s" );
         }
-        int mana = SkillConfigManager.getUseSetting(hero, this, Setting.MANA,
-                30, false);
-        if (mana > 0) {
-            sb.append(" M:");
-            sb.append(mana);
+        
+        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int manaUse = initM - redM;
+        if (manaUse > 0) {
+        	description.append(" M:"+manaUse);
         }
-        return sb.toString();
+        
+        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int HPCost = initHP - redHP;
+        if (HPCost > 0) {
+        	description.append(" HP:"+HPCost);
+        }
+        
+        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int foodCost = initF - redF;
+        if (foodCost > 0) {
+        	description.append(" FP:"+foodCost);
+        }
+        
+        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        if (delay > 0) {
+        	description.append(" W:"+delay);
+        }
+        
+        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        if (exp > 0) {
+        	description.append(" XP:"+exp);
+        }
+        
+        return description.toString();
     }
 
     @Override

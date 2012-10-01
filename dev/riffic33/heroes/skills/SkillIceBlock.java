@@ -44,10 +44,11 @@ public class SkillIceBlock extends TargettedSkill {
 
     public SkillIceBlock(Heroes plugin) {
         super(plugin, "IceBlock");
-        setDescription("Encapsulate your target in ice for %s seconds. ");
         setUsage("/skill iceblock");
-        setIdentifiers("skill iceblock", "skill Iceblock", "skill IceBlock",
-                "skill iceBlock");
+        setIdentifiers(
+        		"skill iceblock", "skill Iceblock", 
+        		"skill IceBlock", "skill iceBlock"
+        );
         setTypes(SkillType.SILENCABLE, SkillType.ICE, SkillType.DEBUFF);
     }
 
@@ -62,36 +63,60 @@ public class SkillIceBlock extends TargettedSkill {
 
     @Override
     public String getDescription(Hero hero) {
-        int bDmg = SkillConfigManager.getUseSetting(hero, this,
-                "BaseTickDamage", 0, false);
-        float bMulti = SkillConfigManager.getUseSetting(hero, this,
-                "LevelMultiplier", 0, false);
-        long duration = SkillConfigManager.getUseSetting(hero, this,
-                Setting.DURATION, 12000, false);
-        int damage = (int) (bMulti <= 0L ? bDmg : bDmg + bMulti
-                * hero.getLevel());
-
-        StringBuffer sb = new StringBuffer(String.format(getDescription(),
-                duration / 1000D));
-        if (damage > 0) {
-            sb.append(" Deals ");
-            sb.append(damage);
-            sb.append(" damage.");
+        int bDmg = SkillConfigManager.getUseSetting(
+        		hero, this,"BaseTickDamage", 0, false);
+        float bMulti = SkillConfigManager.getUseSetting(
+        		hero, this,"LevelMultiplier", 0, false);
+        long duration = SkillConfigManager.getUseSetting(
+        		hero, this,Setting.DURATION, 12000, false);
+        int damage = (int) (bMulti <= 0L ? 
+        		bDmg : bDmg + bMulti * hero.getLevel());
+        String newDmg = damage > 0 ? "Deals " + damage + " over " + duration/1000D + " seconds" : "";
+        
+        String base = String.format( "Encapsulate your target in ice for %s seconds. ", duration / 1000D );
+        
+        StringBuilder description = new StringBuilder( base + newDmg );
+    	
+    	//Additional descriptive-ness of skill settings
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int CD = (initCD - redCD) / 1000;
+        if (CD > 0) {
+        	description.append( " CD:"+ CD + "s" );
         }
-        double cdSec = SkillConfigManager.getUseSetting(hero, this,
-                Setting.COOLDOWN, 45000, false) / 1000.0D;
-        if (cdSec > 0.0D) {
-            sb.append(" CD:");
-            sb.append(Util.formatDouble(cdSec));
-            sb.append("s");
+        
+        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int manaUse = initM - redM;
+        if (manaUse > 0) {
+        	description.append(" M:"+manaUse);
         }
-        int mana = SkillConfigManager.getUseSetting(hero, this, Setting.MANA,
-                30, false);
-        if (mana > 0) {
-            sb.append(" M:");
-            sb.append(mana);
+        
+        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int HPCost = initHP - redHP;
+        if (HPCost > 0) {
+        	description.append(" HP:"+HPCost);
         }
-        return sb.toString();
+        
+        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int foodCost = initF - redF;
+        if (foodCost > 0) {
+        	description.append(" FP:"+foodCost);
+        }
+        
+        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        if (delay > 0) {
+        	description.append(" W:"+delay);
+        }
+        
+        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        if (exp > 0) {
+        	description.append(" XP:"+exp);
+        }
+        
+        return description.toString();
     }
 
     @Override

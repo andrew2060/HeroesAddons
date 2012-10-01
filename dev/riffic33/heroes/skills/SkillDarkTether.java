@@ -54,7 +54,51 @@ public class SkillDarkTether extends TargettedSkill {
     	boolean closeNess 	= (boolean) SkillConfigManager.getUseSetting(hero, this, "DamageByCloseness", false);
     	int tickDmg 		= (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
     	
-        return String.format("Put a damage over time effect on the target dealing %s damage times how %s target is to the caster every %s seconds over %s seconds. Max effective distance of %s blocks", tickDmg, closeNess ? "close" : "far away", period/1000D, duration/1000D, maxDist);
+        String base = String.format("Put a damage over time effect on the target dealing %s damage times how %s the target is to the caster every %s seconds over %s seconds. Max effective distance of %s blocks", 
+        		tickDmg, closeNess ? "close" : "far away", period/1000D, duration/1000D, maxDist);
+        
+        StringBuilder description = new StringBuilder( base );
+    	
+    	//Additional descriptive-ness of skill settings
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int CD = (initCD - redCD) / 1000;
+        if (CD > 0) {
+        	description.append( " CD:"+ CD + "s" );
+        }
+        
+        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int manaUse = initM - redM;
+        if (manaUse > 0) {
+        	description.append(" M:"+manaUse);
+        }
+        
+        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int HPCost = initHP - redHP;
+        if (HPCost > 0) {
+        	description.append(" HP:"+HPCost);
+        }
+        
+        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int foodCost = initF - redF;
+        if (foodCost > 0) {
+        	description.append(" FP:"+foodCost);
+        }
+        
+        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        if (delay > 0) {
+        	description.append(" W:"+delay);
+        }
+        
+        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        if (exp > 0) {
+        	description.append(" XP:"+exp);
+        }
+        
+        return description.toString();
     }
     
     

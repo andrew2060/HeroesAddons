@@ -46,7 +46,50 @@ public class SkillRocketJump extends ActiveSkill {
     @Override
     public String getDescription(Hero hero) {
         int boosts = SkillConfigManager.getUseSetting(hero, this, "rocket-boosts", 1, false);
-        return String.format("Put on a rocket pack with %s boosts. Safe fall provided.", boosts);
+        String base = String.format("Put on a rocket pack with %s boosts. Safe fall provided.", boosts);
+        
+        StringBuilder description = new StringBuilder( base );
+    	
+    	//Additional descriptive-ness of skill settings
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int CD = (initCD - redCD) / 1000;
+        if (CD > 0) {
+        	description.append( " CD:"+ CD + "s" );
+        }
+        
+        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int manaUse = initM - redM;
+        if (manaUse > 0) {
+        	description.append(" M:"+manaUse);
+        }
+        
+        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int HPCost = initHP - redHP;
+        if (HPCost > 0) {
+        	description.append(" HP:"+HPCost);
+        }
+        
+        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int foodCost = initF - redF;
+        if (foodCost > 0) {
+        	description.append(" FP:"+foodCost);
+        }
+        
+        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        if (delay > 0) {
+        	description.append(" W:"+delay);
+        }
+        
+        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        if (exp > 0) {
+        	description.append(" XP:"+exp);
+        }
+        
+        return description.toString();
     }
 
     @Override

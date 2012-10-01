@@ -40,8 +40,49 @@ public class SkillBlizzard extends ActiveSkill{
 		int duration 		= (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
     	int durMulti 		= (int) SkillConfigManager.getUseSetting(hero, this, "DurationLevelMultiplier", 100, false);
     	int newDur 		= (int) (durMulti <= 0L ? duration : duration + durMulti*hero.getLevel());
+		
+		StringBuilder description = new StringBuilder( String.format("Rapid fire snowballs for %s seconds", newDur/1000) );
     	
-		return String.format("Rapid fire snowballs for %s seconds", newDur/1000);
+    	//Additional descriptive-ness of skill settings
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int CD = (initCD - redCD) / 1000;
+        if (CD > 0) {
+        	description.append( " CD:"+ CD + "s" );
+        }
+        
+        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int manaUse = initM - redM;
+        if (manaUse > 0) {
+        	description.append(" M:"+manaUse);
+        }
+        
+        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int HPCost = initHP - redHP;
+        if (HPCost > 0) {
+        	description.append(" HP:"+HPCost);
+        }
+        
+        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int foodCost = initF - redF;
+        if (foodCost > 0) {
+        	description.append(" FP:"+foodCost);
+        }
+        
+        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        if (delay > 0) {
+        	description.append(" W:"+delay);
+        }
+        
+        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        if (exp > 0) {
+        	description.append(" XP:"+exp);
+        }
+        
+        return description.toString();
 	}
     
     @Override
