@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Heroes"/>
 	<classpathentry kind="lib" path="C:/Users/Andrew/Projects/KingdomsOfArden-HeroesSkills/lib/spigot-1.6.2-R0.1.jar">
@@ -8,5 +8,5 @@
 			<attribute name="javadoc_location" value="http://jd.bukkit.org/dev/apidocs"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="output" path=""/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
