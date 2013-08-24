@@ -47,7 +47,7 @@
     </target>
 	
 	<target name="zip">
-		<zip destfile="${dir.dist}/Proxis-Heroes-Skills.zip">
+		<zip destfile="${dir.dist}/Riffic33-Heroes-Skills.zip">
 			<fileset dir="${dir.dist}" includes="*.jar"/>
 		    <fileset dir="${dir.dist}" includes="${dir.dist.skills}/**/*.jar"/>
 		</zip>
