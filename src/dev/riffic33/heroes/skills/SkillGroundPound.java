@@ -44,10 +44,10 @@ public class SkillGroundPound extends ActiveSkill {
     
     @Override
     public String getDescription(Hero hero) {
-    	int bDmg 			= (int) SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
+    	double bDmg 			= SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
     	float bMulti 		= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0.5, false);
     	int targets 		= (int) SkillConfigManager.getUseSetting(hero, this, "Targets", 10, false);
-    	int newDmg 		= (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
+    	double newDmg 		= (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
     	
     	String base = String.format("Hit the ground dealing %s damage and sending %s nearby enemies into the air", newDmg, targets);
     	
@@ -98,12 +98,12 @@ public class SkillGroundPound extends ActiveSkill {
     @Override
     public SkillResult use(Hero hero, String[] args) {
     	Player player = hero.getPlayer();
-    	int bDmg 			= (int) SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
+    	double bDmg 			= SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
     	float bMulti 		= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0.5, false);
     	int targets 		= (int) SkillConfigManager.getUseSetting(hero, this, "Targets", 10, false);
     	int radius 			= (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.RADIUS, 5, false);
     	float jMod 			= (float) SkillConfigManager.getUseSetting(hero, this, "JumpMultiplier", 0.6, false);
-    	int newDmg 		= (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
+    	double newDmg 		= (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
     	
     	List<Entity> nearby = player.getNearbyEntities(radius, radius, radius);
     	HeroParty hParty = hero.getParty();
