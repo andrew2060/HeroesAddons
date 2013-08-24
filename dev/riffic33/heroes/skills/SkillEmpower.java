@@ -20,8 +20,8 @@ import com.herocraftonline.heroes.characters.effects.EffectType;
 import com.herocraftonline.heroes.characters.effects.ExpirableEffect;
 import com.herocraftonline.heroes.characters.skill.Skill;
 import com.herocraftonline.heroes.characters.skill.SkillConfigManager;
+import com.herocraftonline.heroes.characters.skill.SkillSetting;
 import com.herocraftonline.heroes.characters.skill.SkillType;
-import com.herocraftonline.heroes.util.Setting;
 import com.herocraftonline.heroes.util.Util;
 
 public class SkillEmpower extends ActiveSkill {
@@ -39,7 +39,7 @@ public class SkillEmpower extends ActiveSkill {
     @Override
     public ConfigurationSection getDefaultConfig() {
         ConfigurationSection node = super.getDefaultConfig();
-        node.set(Setting.DURATION.node(), 5000);	
+        node.set(SkillSetting.DURATION.node(), 5000);	
         node.set("BaseDamage", 2);
         node.set("LevelMultiplier", 0.5);
         node.set("Percentage", 10);
@@ -50,7 +50,7 @@ public class SkillEmpower extends ActiveSkill {
     
     @Override
     public String getDescription(Hero hero) {
-    	int duration 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
+    	int duration 	= (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 5000, false);
     	
     	int bDmg 		= (int) SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
     	float bMulti 	= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0.5, false);
@@ -65,40 +65,40 @@ public class SkillEmpower extends ActiveSkill {
     	StringBuilder description = new StringBuilder( base );
     	
     	//Additional descriptive-ness of skill settings
-    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
-    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int CD = (initCD - redCD) / 1000;
         if (CD > 0) {
         	description.append( " CD:"+ CD + "s" );
         }
         
-        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
-        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int initM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
         int manaUse = initM - redM;
         if (manaUse > 0) {
         	description.append(" M:"+manaUse);
         }
         
-        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
-        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int initHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
         int HPCost = initHP - redHP;
         if (HPCost > 0) {
         	description.append(" HP:"+HPCost);
         }
         
-        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
-        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int initF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int foodCost = initF - redF;
         if (foodCost > 0) {
         	description.append(" FP:"+foodCost);
         }
         
-        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        int delay = SkillConfigManager.getUseSetting(hero, this, SkillSetting.DELAY.node(), 0, false) / 1000;
         if (delay > 0) {
         	description.append(" W:"+delay);
         }
         
-        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        int exp = SkillConfigManager.getUseSetting(hero, this, SkillSetting.EXP.node(), 0, false);
         if (exp > 0) {
         	description.append(" XP:"+exp);
         }
@@ -109,7 +109,7 @@ public class SkillEmpower extends ActiveSkill {
     @Override
 	public SkillResult use(Hero hero, String[] arg1) {
     	
-    	int duration 		= (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
+    	int duration 		= (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 5000, false);
     	hero.addEffect(new EmpowerBuff(this, duration));
     	
 		return SkillResult.NORMAL;
@@ -189,7 +189,7 @@ public class SkillEmpower extends ActiveSkill {
             	int addPercentDamage = 0;
             	if(initTarg instanceof Player){
             		Hero targHero = plugin.getCharacterManager().getHero( (Player) initTarg );
-            		addPercentDamage = (int) ((int) targHero.getMaxHealth()*(newPercent/100f));
+            		addPercentDamage = (int) (targHero.getPlayer().getMaxHealth()*(newPercent/100f));
             	}else{
             		addPercentDamage = (int) (((LivingEntity) initTarg).getMaxHealth()*(newPercent/100f));
             	}

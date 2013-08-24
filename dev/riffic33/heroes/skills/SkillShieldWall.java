@@ -16,8 +16,9 @@ import com.herocraftonline.heroes.characters.effects.ExpirableEffect;
 import com.herocraftonline.heroes.characters.skill.ActiveSkill;
 import com.herocraftonline.heroes.characters.skill.Skill;
 import com.herocraftonline.heroes.characters.skill.SkillConfigManager;
+import com.herocraftonline.heroes.characters.skill.SkillSetting;
 import com.herocraftonline.heroes.characters.skill.SkillType;
-import com.herocraftonline.heroes.util.Setting;
+
 
 
 public class SkillShieldWall extends ActiveSkill {
@@ -35,8 +36,8 @@ public class SkillShieldWall extends ActiveSkill {
     	ConfigurationSection node = super.getDefaultConfig();
         node.set("Height", 3);
         node.set("Width", 2);
-        node.set(Setting.MAX_DISTANCE.node(), 5);
-        node.set(Setting.DURATION.node(), 5000);
+        node.set(SkillSetting.MAX_DISTANCE.node(), 5);
+        node.set(SkillSetting.DURATION.node(), 5000);
         node.set("BlockType", "STONE");
         return  node;
     }
@@ -45,7 +46,7 @@ public class SkillShieldWall extends ActiveSkill {
     public String getDescription(Hero hero) {
     	int height 		= (int) SkillConfigManager.getUseSetting(hero, this, "Height", 3, false);
     	int width 		= (int) SkillConfigManager.getUseSetting(hero, this, "width", 2, false);
-    	int maxDist 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.MAX_DISTANCE, 5, false);
+    	int maxDist 	= (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.MAX_DISTANCE, 5, false);
     	String type 	= SkillConfigManager.getUseSetting(hero, this, "BlockType", "STONE");
     	
         String base = String.format("Makes a wall of %s which is %s wide by %s high up to %s blocks away (Targetted)", type, width, height, maxDist);
@@ -53,40 +54,40 @@ public class SkillShieldWall extends ActiveSkill {
         StringBuilder description = new StringBuilder( base );
     	
     	//Additional descriptive-ness of skill settings
-    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
-    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int CD = (initCD - redCD) / 1000;
         if (CD > 0) {
         	description.append( " CD:"+ CD + "s" );
         }
         
-        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
-        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int initM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
         int manaUse = initM - redM;
         if (manaUse > 0) {
         	description.append(" M:"+manaUse);
         }
         
-        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
-        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int initHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
         int HPCost = initHP - redHP;
         if (HPCost > 0) {
         	description.append(" HP:"+HPCost);
         }
         
-        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
-        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int initF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int foodCost = initF - redF;
         if (foodCost > 0) {
         	description.append(" FP:"+foodCost);
         }
         
-        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        int delay = SkillConfigManager.getUseSetting(hero, this, SkillSetting.DELAY.node(), 0, false) / 1000;
         if (delay > 0) {
         	description.append(" W:"+delay);
         }
         
-        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        int exp = SkillConfigManager.getUseSetting(hero, this, SkillSetting.EXP.node(), 0, false);
         if (exp > 0) {
         	description.append(" XP:"+exp);
         }
@@ -99,8 +100,8 @@ public class SkillShieldWall extends ActiveSkill {
     	Player player = hero.getPlayer();
     	int height 		= (int) SkillConfigManager.getUseSetting(hero, this, "Height", 3, false);
     	int width 		= (int) SkillConfigManager.getUseSetting(hero, this, "width", 2, false);
-    	int maxDist 	= (int) SkillConfigManager.getUseSetting(hero, this, Setting.MAX_DISTANCE, 5, false);
-    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
+    	int maxDist 	= (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.MAX_DISTANCE, 5, false);
+    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 5000, false);
     	Material setter = Material.valueOf(SkillConfigManager.getUseSetting(hero, this, "BlockType", "STONE"));
     
     	Block tBlock = player.getTargetBlock(null, maxDist);

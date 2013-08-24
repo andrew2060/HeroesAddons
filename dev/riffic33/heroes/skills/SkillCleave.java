@@ -27,9 +27,9 @@ import com.herocraftonline.heroes.characters.party.HeroParty;
 import com.herocraftonline.heroes.characters.skill.ActiveSkill;
 import com.herocraftonline.heroes.characters.skill.Skill;
 import com.herocraftonline.heroes.characters.skill.SkillConfigManager;
+import com.herocraftonline.heroes.characters.skill.SkillSetting;
 import com.herocraftonline.heroes.characters.skill.SkillType;
 import com.herocraftonline.heroes.util.Messaging;
-import com.herocraftonline.heroes.util.Setting;
 import com.herocraftonline.heroes.util.Util;
 
 
@@ -49,17 +49,17 @@ public class SkillCleave extends ActiveSkill {
     public ConfigurationSection getDefaultConfig() {
         ConfigurationSection node = super.getDefaultConfig();
         node.set("MaxTargets", 3);
-        node.set(Setting.DURATION.node(), 5000);
+        node.set(SkillSetting.DURATION.node(), 5000);
         node.set("BaseDamage", 3);
         node.set("LevelMultiplier", 0.5);
-        node.set(Setting.RADIUS.node(), 5);
+        node.set(SkillSetting.RADIUS.node(), 5);
         return  node;
     }
     
     @Override
     public String getDescription(Hero hero) {
     	int MaxTargets = (int) SkillConfigManager.getSetting(hero.getHeroClass(), this, "MaxTargets", 10);
-    	int radius = (int) SkillConfigManager.getSetting(hero.getHeroClass(), this, Setting.RADIUS.node(), 3);
+    	int radius = (int) SkillConfigManager.getSetting(hero.getHeroClass(), this, SkillSetting.RADIUS.node(), 3);
     	int bDmg 			= (int) SkillConfigManager.getUseSetting(hero, this, "BaseDamage", 3, false);
     	float bMulti 		= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0.5, false);
     	int newDmg 		= (int) (bMulti <= 0L ? bDmg : bDmg + bMulti*hero.getLevel());
@@ -67,40 +67,40 @@ public class SkillCleave extends ActiveSkill {
         StringBuilder description = new StringBuilder( String.format("Attack up to %s enemies within a %s block radius in front of you for %s damage.", MaxTargets, radius, newDmg) );
     	
     	//Additional descriptive-ness of skill settings
-    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
-    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int CD = (initCD - redCD) / 1000;
         if (CD > 0) {
         	description.append( " CD:"+ CD + "s" );
         }
         
-        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
-        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int initM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
         int manaUse = initM - redM;
         if (manaUse > 0) {
         	description.append(" M:"+manaUse);
         }
         
-        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
-        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int initHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
         int HPCost = initHP - redHP;
         if (HPCost > 0) {
         	description.append(" HP:"+HPCost);
         }
         
-        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
-        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int initF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int foodCost = initF - redF;
         if (foodCost > 0) {
         	description.append(" FP:"+foodCost);
         }
         
-        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        int delay = SkillConfigManager.getUseSetting(hero, this, SkillSetting.DELAY.node(), 0, false) / 1000;
         if (delay > 0) {
         	description.append(" W:"+delay);
         }
         
-        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        int exp = SkillConfigManager.getUseSetting(hero, this, SkillSetting.EXP.node(), 0, false);
         if (exp > 0) {
         	description.append(" XP:"+exp);
         }
@@ -110,7 +110,7 @@ public class SkillCleave extends ActiveSkill {
     
     @Override
 	public SkillResult use(Hero hero, String[] args) {
-    	int duration = (int) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 5000, false);
+    	int duration = (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 5000, false);
     	
     	CleaveBuff cb = new CleaveBuff(this, duration);
     	hero.addEffect( cb );
@@ -189,7 +189,7 @@ public class SkillCleave extends ActiveSkill {
     	
     	Hero hero = plugin.getCharacterManager().getHero(player);
     	int MaxTargets = (int) SkillConfigManager.getUseSetting(hero, this, "MaxTargets", 3, false) - 1;
-    	int radius = (int) SkillConfigManager.getUseSetting(hero, this, Setting.RADIUS, 5, false);
+    	int radius = (int) SkillConfigManager.getUseSetting(hero, this, SkillSetting.RADIUS, 5, false);
 
     	int Hits = 0; 
     	List<Entity> nearby = player.getNearbyEntities(radius, radius, radius);

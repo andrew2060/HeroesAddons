@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.api.SkillResult;
 import com.herocraftonline.heroes.api.events.HeroEnterCombatEvent;
@@ -18,8 +19,9 @@ import com.herocraftonline.heroes.characters.effects.PeriodicExpirableEffect;
 import com.herocraftonline.heroes.characters.skill.ActiveSkill;
 import com.herocraftonline.heroes.characters.skill.Skill;
 import com.herocraftonline.heroes.characters.skill.SkillConfigManager;
+import com.herocraftonline.heroes.characters.skill.SkillSetting;
 import com.herocraftonline.heroes.characters.skill.SkillType;
-import com.herocraftonline.heroes.util.Setting;
+
 
 
 public class SkillMeditate extends ActiveSkill {
@@ -37,8 +39,8 @@ public class SkillMeditate extends ActiveSkill {
     @Override
     public ConfigurationSection getDefaultConfig() {
         ConfigurationSection node = super.getDefaultConfig();
-        node.set(Setting.DURATION.node(), 10000);
-        node.set(Setting.PERIOD.node(), 2000);
+        node.set(SkillSetting.DURATION.node(), 10000);
+        node.set(SkillSetting.PERIOD.node(), 2000);
         node.set("MovingCancels", true);
         node.set("CombatCancels", true);
         node.set("BaseHeals", 10);
@@ -49,8 +51,8 @@ public class SkillMeditate extends ActiveSkill {
     
     @Override
     public String getDescription(Hero hero) {
-    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 10000, false);
-    	long period 	= (long) SkillConfigManager.getUseSetting(hero, this, Setting.PERIOD, 2000, false);
+    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 10000, false);
+    	long period 	= (long) SkillConfigManager.getUseSetting(hero, this, SkillSetting.PERIOD, 2000, false);
     	long interval 	= duration / period;
     	
     	int bHeal 		= (int) SkillConfigManager.getUseSetting(hero, this, "BaseHeals", 10, false);
@@ -76,40 +78,40 @@ public class SkillMeditate extends ActiveSkill {
     	StringBuilder description = new StringBuilder( base );
     	
     	//Additional descriptive-ness of skill settings
-    	int initCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN.node(), 0, false);
-    	int redCD = SkillConfigManager.getUseSetting(hero, this, Setting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+    	int initCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN.node(), 0, false);
+    	int redCD = SkillConfigManager.getUseSetting(hero, this, SkillSetting.COOLDOWN_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int CD = (initCD - redCD) / 1000;
         if (CD > 0) {
         	description.append( " CD:"+ CD + "s" );
         }
         
-        int initM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA.node(), 0, false);
-        int redM = SkillConfigManager.getUseSetting(hero, this, Setting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
+        int initM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA.node(), 0, false);
+        int redM = SkillConfigManager.getUseSetting(hero, this, SkillSetting.MANA_REDUCE.node(), 0, false)* hero.getSkillLevel(this);
         int manaUse = initM - redM;
         if (manaUse > 0) {
         	description.append(" M:"+manaUse);
         }
         
-        int initHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST, 0, false);
-        int redHP = SkillConfigManager.getUseSetting(hero, this, Setting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
+        int initHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST, 0, false);
+        int redHP = SkillConfigManager.getUseSetting(hero, this, SkillSetting.HEALTH_COST_REDUCE, 0, true) * hero.getSkillLevel(this);
         int HPCost = initHP - redHP;
         if (HPCost > 0) {
         	description.append(" HP:"+HPCost);
         }
         
-        int initF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA.node(), 0, false);
-        int redF = SkillConfigManager.getUseSetting(hero, this, Setting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
+        int initF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA.node(), 0, false);
+        int redF = SkillConfigManager.getUseSetting(hero, this, SkillSetting.STAMINA_REDUCE.node(), 0, false) * hero.getSkillLevel(this);
         int foodCost = initF - redF;
         if (foodCost > 0) {
         	description.append(" FP:"+foodCost);
         }
         
-        int delay = SkillConfigManager.getUseSetting(hero, this, Setting.DELAY.node(), 0, false) / 1000;
+        int delay = SkillConfigManager.getUseSetting(hero, this, SkillSetting.DELAY.node(), 0, false) / 1000;
         if (delay > 0) {
         	description.append(" W:"+delay);
         }
         
-        int exp = SkillConfigManager.getUseSetting(hero, this, Setting.EXP.node(), 0, false);
+        int exp = SkillConfigManager.getUseSetting(hero, this, SkillSetting.EXP.node(), 0, false);
         if (exp > 0) {
         	description.append(" XP:"+exp);
         }
@@ -120,8 +122,8 @@ public class SkillMeditate extends ActiveSkill {
     @Override
 	public SkillResult use(Hero hero, String[] arg1) {
     	
-    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, Setting.DURATION, 10000, false);
-    	long period 	= (long) SkillConfigManager.getUseSetting(hero, this, Setting.PERIOD, 2000, false);
+    	long duration 	= (long) SkillConfigManager.getUseSetting(hero, this, SkillSetting.DURATION, 10000, false);
+    	long period 	= (long) SkillConfigManager.getUseSetting(hero, this, SkillSetting.PERIOD, 2000, false);
     	
     	int bHeal 		= (int) SkillConfigManager.getUseSetting(hero, this, "BaseHeals", 10, false);
     	float bMulti 	= (float) SkillConfigManager.getUseSetting(hero, this, "LevelMultiplier", 0.5, false);
@@ -167,9 +169,9 @@ public class SkillMeditate extends ActiveSkill {
 
 		@Override
 		public void tickHero(Hero hero) {
-            int newHealth = (int) (healAmount / ( this.getDuration() / this.getPeriod() ) );
+            double newHealth = (healAmount / ( this.getDuration() / this.getPeriod() ) ); 
 			
-			HeroRegainHealthEvent regain = new HeroRegainHealthEvent(hero, (int) newHealth, skill);
+			HeroRegainHealthEvent regain = new HeroRegainHealthEvent(hero, newHealth, skill);
             plugin.getServer().getPluginManager().callEvent(regain);
             
             if (regain.isCancelled()) {
@@ -179,8 +181,7 @@ public class SkillMeditate extends ActiveSkill {
             if( !hero.getPlayer().getLocation().getBlock().getLocation().equals( startLoc ) || hero.isInCombat() ){
             	hero.removeEffect( this );
             }else{
-            	hero.setHealth( hero.getHealth() + regain.getAmount() );
-            	hero.syncHealth();
+            	hero.getPlayer().setHealth( hero.getPlayer().getHealth() + regain.getAmount() );
             }
             
 		}
