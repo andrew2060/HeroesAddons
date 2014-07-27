@@ -40,6 +40,20 @@
 			<groupId>com.herocraftonline.heroes</groupId>
 			<artifactId>Heroes</artifactId>
 			<version>1.5.5.3-SNAPSHOT</version>
+			<exclusions>
+			    <exclusion>
+			        <artifactId>Vault</artifactId>
+			        <groupId>net.milkbowl.vault</groupId>
+			    </exclusion>
+			    <exclusion>
+			        <artifactId>HeroChat</artifactId>
+			        <groupId>com.dthielke.herochat</groupId>
+			    </exclusion>
+			    <exclusion>
+			        <artifactId>scrollingmenusign</artifactId>
+			        <groupId>me.desht</groupId>
+			    </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>
